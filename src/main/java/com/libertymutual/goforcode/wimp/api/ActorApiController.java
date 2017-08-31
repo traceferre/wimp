@@ -13,16 +13,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.libertymutual.goforcode.wimp.models.Actor;
+//import com.libertymutual.goforcode.wimp.models.ActorWithMovies;
+import com.libertymutual.goforcode.wimp.models.Award;
 import com.libertymutual.goforcode.wimp.repositories.ActorRepository;
+import com.libertymutual.goforcode.wimp.repositories.AwardRepository;
 
 @RestController
 @RequestMapping ("/api/actors")
 public class ActorApiController {
 	
 	private ActorRepository actorRepo;
+	private AwardRepository awardRepo;
 	
-	public ActorApiController(ActorRepository actorRepo) {
+	public ActorApiController(ActorRepository actorRepo, AwardRepository awardRepo) {
 		this.actorRepo = actorRepo;
+		this.awardRepo = awardRepo;
 		
 		Actor actor = new Actor();
 		actor.setFirstName("Bill");
@@ -30,8 +35,8 @@ public class ActorApiController {
 		actorRepo.save(actor);
 		
 		actor = new Actor();
-		actor.setFirstName("Clint");
-		actor.setLastName("Eastwood");
+		actor.setFirstName("Dan");
+		actor.setLastName("Aykroyd");
 		actorRepo.save(actor);
 	}
 	
@@ -44,6 +49,17 @@ public class ActorApiController {
 	public Actor getOne(@PathVariable long id) throws StuffNotFoundException {
 		Actor actor = actorRepo.findOne(id);
 		if (actor == null) throw new StuffNotFoundException();
+		
+		
+		
+//		ActorWithMovies actorWM = new ActorWithMovies();
+//		actorWM.setActiveSinceYear(actor.getActiveSinceYear());
+//		actorWM.setBirthDate(actor.getBirthDate());
+//		actorWM.setFirstName(actor.getFirstName());
+//		actorWM.setMovies(actor.getMovies());
+//		actorWM.setLastName(actor.getLastName());
+//		return actorWM;
+		
 		return actor;
 	}
 	
@@ -58,6 +74,22 @@ public class ActorApiController {
 	@PostMapping("")
 	public Actor create(@RequestBody Actor actor) {
 		return actorRepo.save(actor);
+	}
+	
+	@PostMapping("/{actorId}/awards")
+	public Actor associateAnAward(@PathVariable long actorId, @RequestBody Award award) {
+		Actor actor = actorRepo.findOne(actorId);
+		
+//		Award tempAward = new Award();		
+//		tempAward.setTitle(award.getTitle());
+//		tempAward.setOrganization(award.getOrganization());
+//		tempAward.setYear(award.getYear());
+		award.setActor(actor);
+		awardRepo.save(award);
+		
+		
+		
+		return actorRepo.findOne(actorId);
 	}
 	
 	@PutMapping("/{id}")
