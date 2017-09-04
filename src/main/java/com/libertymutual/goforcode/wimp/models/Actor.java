@@ -39,16 +39,15 @@ public class Actor {
 	@OneToMany(mappedBy="actor")
 	private List<Award> awards;
 	
+	@ManyToMany(mappedBy="actors")
+	private List<Movie> movies;
+	
 	public void addAward(Award award) {
 		if (awards == null) {
 			awards = new ArrayList<Award>();
 		}
 		awards.add(award);
-	}
-	
-//	@JsonIgnore
-	@ManyToMany(mappedBy="actors")
-	private List<Movie> movies;
+	}	
 
 	public Long getId() {
 		return id;
